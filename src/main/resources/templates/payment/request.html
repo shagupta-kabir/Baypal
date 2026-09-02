@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Request money — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='payments')}"></div>
+
+  <main class="app-main">
+    <div class="page-head"><h1>Request money</h1></div>
+
+    <div class="card form-card">
+      <div th:if="${success}" class="alert alert-success" th:text="${success}">Sent</div>
+
+      <!-- field names match dto/PaymentRequestDto.java, bound in PaymentController -->
+      <form th:action="@{/payments/request}" th:object="${paymentRequestDto}" method="post" class="stack">
+        <div class="field">
+          <label for="payerEmail">Who should pay?</label>
+          <input type="email" id="payerEmail" th:field="*{payerEmail}" placeholder="friend@example.com" required>
+        </div>
+        <div class="field">
+          <label for="amount">Amount (USD)</label>
+          <input type="number" id="amount" th:field="*{amount}" step="0.01" min="0.01" placeholder="25.00" required>
+        </div>
+        <div class="field">
+          <label for="note">What's it for? (optional)</label>
+          <input type="text" id="note" th:field="*{note}" placeholder="Concert tickets">
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Send request</button>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>

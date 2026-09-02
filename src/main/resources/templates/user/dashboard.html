@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='dashboard')}"></div>
+
+  <main class="container dash-grid">
+
+    <!-- LEFT: balance + actions -->
+    <section class="stack">
+      <div class="card balance-card">
+        <div class="row" style="align-items:flex-start;">
+          <div>
+            <span class="muted" style="font-size:.85rem;">Available balance</span>
+            <h1 style="font-size:2.6rem; margin-top:4px;"
+                th:text="${'$' + #numbers.formatDecimal(wallet.balance,1,2)}">$0.00</h1>
+          </div>
+          <span class="chip chip-tea" th:text="${user.enabled} ? 'Active wallet' : 'Frozen'">Active wallet</span>
+        </div>
+        <div style="display:flex; gap:12px; margin-top:22px; flex-wrap:wrap;">
+          <!-- no self-service "add money" button here on purpose - a user
+               can't fund their own wallet out of thin air. Money only comes
+               in by someone else sending it (Send money) or an admin
+               depositing it after verifying a real-world payment. -->
+          <a class="btn btn-sky" th:href="@{/transactions/send}">Send money</a>
+          <a class="btn btn-ghost" th:href="@{/wallet/withdraw}">Withdraw</a>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row">
+          <h3 style="margin:0;">Recent transactions</h3>
+          <a th:href="@{/transactions}" style="font-size:.85rem;">View all</a>
+        </div>
+
+        <ul class="tx-list" th:if="${not #lists.isEmpty(recentTransactions)}">
+          <li class="tx-row" th:each="tx : ${recentTransactions}">
+            <span class="tx-icon" th:classappend="${tx.type == 'CREDIT'} ? 'tx-in' : 'tx-out'"
+                  th:text="${tx.type == 'CREDIT'} ? '↓' : '↑'">↓</span>
+            <div class="tx-info">
+              <strong th:text="${tx.counterpartyName}">Someone</strong>
+              <span class="muted" th:text="${#temporals.format(tx.createdAt, 'MMM d, h:mm a')}">Aug 21, 4:12 PM</span>
+            </div>
+            <span class="tx-amount" th:classappend="${tx.type == 'CREDIT'} ? 'amt-in' : 'amt-out'"
+                  th:text="${(tx.type == 'CREDIT' ? '+' : '-') + '$' + #numbers.formatDecimal(tx.amount,1,2)}">+$0.00</span>
+          </li>
+        </ul>
+
+        <div class="empty-state" th:if="${#lists.isEmpty(recentTransactions)}">
+          <p style="margin:0;">No transactions yet — send or request money to get started.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RIGHT: sidebar -->
+    <aside class="stack">
+      <div class="card">
+        <h3 style="margin-top:0;">Payment requests</h3>
+
+        <div th:if="${not #lists.isEmpty(pendingRequests)}">
+          <div class="req-row" th:each="req : ${pendingRequests}">
+            <div>
+              <strong th:text="${req.requester.firstName + ' ' + req.requester.lastName}">Someone</strong>
+              <div class="muted" style="font-size:.82rem;"
+                   th:text="'requests $' + ${#numbers.formatDecimal(req.amount,1,2)}">requests $0.00</div>
+            </div>
+            <form th:action="@{'/payments/' + ${req.id} + '/pay'}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-primary" style="padding:8px 14px; font-size:.82rem;">Pay</button>
+            </form>
+          </div>
+        </div>
+
+        <p class="muted" style="font-size:.88rem;" th:if="${#lists.isEmpty(pendingRequests)}">No pending requests.</p>
+
+        <a th:href="@{/payments/requests}" style="font-size:.85rem;">See all requests</a>
+      </div>
+
+      <div class="card" style="background: linear-gradient(135deg, var(--tea), var(--surface));">
+        <span class="chip chip-sky">Account</span>
+        <h3 style="margin-top:12px;" th:text="${user.firstName + ' ' + user.lastName}">Name</h3>
+        <p class="muted" style="margin:0; font-size:.88rem;" th:text="${user.email}">email@example.com</p>
+      </div>
+    </aside>
+
+  </main>
+
+</body>
+</html>

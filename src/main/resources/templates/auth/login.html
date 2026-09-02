@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log in — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+  <div class="auth-shell">
+    <div class="auth-side">
+      <div class="brand" style="color:#fff;">
+        <span class="mark" style="background:rgba(255,255,255,.22);">B</span>
+        BayPal
+      </div>
+      <p class="quote">"Sent the rent in under ten seconds — no app juggling, no waiting for it to clear."</p>
+      <div style="font-size:.85rem; opacity:.85;">— a BayPal wallet holder</div>
+    </div>
+
+    <div class="auth-form-wrap">
+      <div class="form-inner">
+        <a th:href="@{/}" class="muted" style="font-size:.85rem;">&larr; Back to home</a>
+        <h1 style="margin-top:18px;">Welcome back</h1>
+        <p class="mt-0">Log in to check your balance and move money.</p>
+
+        <!-- Spring Security's formLogin filter intercepts this POST itself -
+             usernameParameter/passwordParameter in SecurityConfig are set to
+             "email"/"password" to match these field names. -->
+        <form th:action="@{/login}" method="post" class="stack" style="margin-top:8px;">
+
+          <div th:if="${param.error}" class="alert alert-error">
+            Incorrect email or password. Try again.
+          </div>
+          <div th:if="${param.registered}" class="alert alert-success">
+            Account created — log in below.
+          </div>
+          <div th:if="${param.logout}" class="alert alert-success">
+            You've been logged out.
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" placeholder="you@example.com" required autofocus>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:6px;">Log in</button>
+        </form>
+
+        <p class="text-center muted" style="margin-top:22px; font-size:.82rem;">
+          Demo accounts — admin@baypal.com / admin123 &nbsp;·&nbsp; demo@baypal.com / demo123
+        </p>
+
+        <p class="text-center" style="margin-top:14px; font-size:.9rem;">
+          New to BayPal?
+          <a th:href="@{/register}">Create an account</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

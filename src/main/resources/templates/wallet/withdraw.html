@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Withdraw — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='wallet')}"></div>
+
+  <main class="app-main">
+    <div class="page-head"><h1>Withdraw</h1></div>
+
+    <div class="card form-card">
+      <p class="muted" style="margin-top:0;">
+        Available to withdraw:
+        <strong th:text="${'$' + #numbers.formatDecimal(wallet.balance,1,2)}">$0.00</strong>
+      </p>
+
+      <div th:if="${success}" class="alert alert-success" th:text="${success}">Withdrawn</div>
+
+      <!-- WalletService.debit() throws InsufficientBalanceException if amount
+           exceeds the balance - GlobalExceptionHandler turns that into the
+           styled error.html page rather than a stack trace -->
+      <form th:action="@{/wallet/withdraw}" method="post" class="stack">
+        <div class="field">
+          <label for="amount">Amount (USD)</label>
+          <input type="number" id="amount" name="amount" step="0.01" min="0.01" placeholder="50.00" required>
+          <div class="hint">Withdraws straight to your linked bank account in a real deployment.</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Withdraw</button>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>

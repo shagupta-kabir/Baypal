@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create your wallet — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/login.css}">
+</head>
+<body>
+
+  <div class="auth-shell">
+    <div class="auth-side" style="background: linear-gradient(160deg, var(--sky) 0%, var(--tea) 100%);">
+      <div class="brand" style="color:#08303a;">
+        <span class="mark" style="background:rgba(8,48,58,.15); color:#08303a;">B</span>
+        BayPal
+      </div>
+      <p class="quote" style="color:#08303a;">"Set up in two minutes, first payment sent five minutes after that."</p>
+      <div style="font-size:.85rem; color:#08303a; opacity:.75;">— a new wallet holder</div>
+    </div>
+
+    <div class="auth-form-wrap">
+      <div class="form-inner">
+        <a th:href="@{/}" class="muted" style="font-size:.85rem;">&larr; Back to home</a>
+        <h1 style="margin-top:18px;">Create your wallet</h1>
+        <p class="mt-0">Takes about two minutes. No paperwork.</p>
+
+        <!-- every field name below matches a field in dto/RegisterRequest.java,
+             so Spring binds this form straight onto that object in AuthController -->
+        <form th:action="@{/register}" th:object="${registerRequest}" method="post" class="stack" style="margin-top:8px;">
+
+          <div th:if="${error}" class="alert alert-error" th:text="${error}">Something went wrong</div>
+
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+            <div class="field" style="margin-bottom:0;">
+              <label for="firstName">First name</label>
+              <input type="text" id="firstName" th:field="*{firstName}" placeholder="Jane" required>
+            </div>
+            <div class="field" style="margin-bottom:0;">
+              <label for="lastName">Last name</label>
+              <input type="text" id="lastName" th:field="*{lastName}" placeholder="Doe" required>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input type="email" id="email" th:field="*{email}" placeholder="you@example.com" required>
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input type="password" id="password" th:field="*{password}" placeholder="At least 8 characters" required minlength="8">
+          </div>
+
+          <div class="field">
+            <label for="confirmPassword">Confirm password</label>
+            <input type="password" id="confirmPassword" th:field="*{confirmPassword}" placeholder="Repeat your password" required minlength="8">
+          </div>
+
+          <label style="display:flex; align-items:flex-start; gap:8px; font-size:.85rem; color:var(--ink-soft);">
+            <input type="checkbox" name="agree" required style="width:auto; margin-top:3px;">
+            I agree to the Terms and Privacy Policy
+          </label>
+
+          <button type="submit" class="btn btn-primary btn-block btn-lg" style="margin-top:6px;">Create account</button>
+        </form>
+
+        <p class="text-center" style="margin-top:26px; font-size:.9rem;">
+          Already have a wallet?
+          <a th:href="@{/login}">Log in</a>
+        </p>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

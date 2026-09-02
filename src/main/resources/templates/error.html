@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Something went wrong — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+  <main style="min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px;">
+    <div class="card text-center" style="max-width:440px;">
+      <span class="chip chip-blush">Error</span>
+      <h1 style="margin-top:16px;">That didn't go through</h1>
+      <p th:text="${message}">Something went wrong on our end. Please try again.</p>
+      <a class="btn btn-primary" th:href="@{/dashboard}">Back to dashboard</a>
+    </div>
+  </main>
+</body>
+</html>

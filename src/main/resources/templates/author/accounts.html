@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage accounts — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='admin')}"></div>
+
+  <main class="app-main wide">
+    <div class="page-head"><h1>Accounts</h1></div>
+
+    <p class="muted" style="margin-top:-10px;">
+      Every admin and user account in the system. "Add money" here funds an
+      admin's wallet out of thin air, the same way an admin funds a user's
+      wallet from the admin panel — use it after topping up an admin's
+      operating balance. Freeze/unfreeze works on both admins and users.
+    </p>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Add money</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="a : ${accounts}">
+            <td th:text="${a.firstName + ' ' + a.lastName}">Name</td>
+            <td th:text="${a.email}">email@example.com</td>
+            <td><span class="chip chip-sky" th:text="${a.role}">USER</span></td>
+            <td>
+              <span class="status-pill" th:classappend="${a.enabled} ? 'status-enabled' : 'status-disabled'"
+                    th:text="${a.enabled} ? 'Active' : 'Frozen'">Active</span>
+            </td>
+            <td class="muted" th:text="${#temporals.format(a.createdAt, 'MMM d, yyyy')}">Aug 21, 2026</td>
+            <td>
+              <!-- posts to AuthorController.creditAdmin() - only shown for
+                   ADMIN-role rows, only admin-only by URL rule AND @PreAuthorize -->
+              <form th:action="@{'/author/accounts/' + ${a.id} + '/add-money'}" method="post"
+                    style="display:flex; gap:6px; align-items:center;" th:if="${a.role.name() == 'ADMIN'}">
+                <input type="number" name="amount" step="0.01" min="0.01" placeholder="50.00" required
+                       style="width:90px; padding:6px 8px; border:1.5px solid var(--line); border-radius:8px; font-size:.8rem;">
+                <button type="submit" class="btn btn-primary" style="padding:6px 12px; font-size:.8rem;">Credit</button>
+              </form>
+              <span class="muted" style="font-size:.8rem;" th:if="${a.role.name() != 'ADMIN'}">—</span>
+            </td>
+            <td>
+              <form th:action="@{'/author/accounts/' + ${a.id} + '/toggle'}" method="post">
+                <button type="submit" class="btn btn-ghost" style="padding:6px 12px; font-size:.8rem;"
+                        th:text="${a.enabled} ? 'Freeze' : 'Unfreeze'">Freeze</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>

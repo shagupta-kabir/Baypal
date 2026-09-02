@@ -1,0 +1,18 @@
+/* Page-specific tweaks for the auth screens.
+   Shared tokens, buttons, and form styles live in style.css — this file
+   only overrides what's unique to the login/register layout. */
+
+.auth-side {
+  position: relative;
+  overflow: hidden;
+}
+.auth-side::after {
+  content: "";
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .12);
+  right: -80px;
+  bottom: -100px;
+}

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Wallet — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='wallet')}"></div>
+
+  <main class="app-main">
+    <div class="page-head"><h1>Wallet</h1></div>
+
+    <div class="card balance-card" style="margin-bottom:24px;">
+      <span class="muted" style="font-size:.85rem;">Available balance</span>
+      <h1 style="font-size:2.6rem; margin-top:4px;"
+          th:text="${'$' + #numbers.formatDecimal(wallet.balance,1,2)}">$0.00</h1>
+      <div style="display:flex; gap:12px; margin-top:20px; flex-wrap:wrap;">
+        <!-- same reasoning as the dashboard: no self "add money" button.
+             Funds only arrive via Send money (from someone else) or an
+             admin crediting the account from /admin/users. -->
+        <a class="btn btn-sky" th:href="@{/transactions/send}">Send money</a>
+        <a class="btn btn-ghost" th:href="@{/wallet/withdraw}">Withdraw</a>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0;">Recent activity</h3>
+
+      <ul class="tx-list" th:if="${not #lists.isEmpty(recentTransactions)}">
+        <li class="tx-row" th:each="tx : ${recentTransactions}">
+          <span class="tx-icon" th:classappend="${tx.type == 'CREDIT'} ? 'tx-in' : 'tx-out'"
+                th:text="${tx.type == 'CREDIT'} ? '↓' : '↑'">↓</span>
+          <div class="tx-info">
+            <strong th:text="${tx.counterpartyName}">Someone</strong>
+            <span class="muted" th:text="${#temporals.format(tx.createdAt, 'MMM d, h:mm a')}">Aug 21, 4:12 PM</span>
+          </div>
+          <span class="tx-amount" th:classappend="${tx.type == 'CREDIT'} ? 'amt-in' : 'amt-out'"
+                th:text="${(tx.type == 'CREDIT' ? '+' : '-') + '$' + #numbers.formatDecimal(tx.amount,1,2)}">+$0.00</span>
+        </li>
+      </ul>
+
+      <div class="empty-state" th:if="${#lists.isEmpty(recentTransactions)}">
+        <p style="margin:0;">Nothing here yet.</p>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

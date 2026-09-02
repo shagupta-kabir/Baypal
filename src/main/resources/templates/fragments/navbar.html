@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+
+<!--
+  One navbar, reused by every page behind login (dashboard, wallet,
+  transactions, payments, admin) via:
+    <div th:replace="~{fragments/navbar :: navbar(active='wallet')}"></div>
+  "active" just controls which nav link gets the highlighted style.
+  sec:authorize="hasRole('ADMIN')" hides the Admin link from normal users -
+  it only renders for accounts whose role is ADMIN.
+-->
+<header class="navbar" th:fragment="navbar(active)">
+  <!-- brand click sends everyone to their own home page - author and admin
+       don't have a personal wallet dashboard the way a regular user does -->
+  <a sec:authorize="hasRole('AUTHOR')" href="/author/dashboard" class="brand" style="text-decoration:none;">
+    <span class="mark">B</span>
+    BayPal
+  </a>
+  <a sec:authorize="hasRole('ADMIN')" href="/admin/dashboard" class="brand" style="text-decoration:none;">
+    <span class="mark">B</span>
+    BayPal
+  </a>
+  <a sec:authorize="hasRole('USER')" href="/dashboard" class="brand" style="text-decoration:none;">
+    <span class="mark">B</span>
+    BayPal
+  </a>
+  <nav>
+    <!-- wallet/send/request pages only make sense for USER and ADMIN
+         accounts - AUTHOR has its own panel below instead -->
+    <a sec:authorize="!hasRole('AUTHOR')" th:href="@{/dashboard}" th:classappend="${active == 'dashboard'} ? 'active'">Dashboard</a>
+    <a sec:authorize="!hasRole('AUTHOR')" th:href="@{/wallet}" th:classappend="${active == 'wallet'} ? 'active'">Wallet</a>
+    <a sec:authorize="!hasRole('AUTHOR')" th:href="@{/transactions}" th:classappend="${active == 'transactions'} ? 'active'">Transactions</a>
+    <a sec:authorize="!hasRole('AUTHOR')" th:href="@{/payments/requests}" th:classappend="${active == 'payments'} ? 'active'">Requests</a>
+    <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}" th:classappend="${active == 'admin'} ? 'active'">Admin</a>
+    <a sec:authorize="hasRole('AUTHOR')" th:href="@{/author/dashboard}" th:classappend="${active == 'admin'} ? 'active'">Author</a>
+  </nav>
+  <div class="actions">
+    <a th:href="@{/profile}" class="avatar" sec:authentication="name">?</a>
+    <form th:action="@{/logout}" method="post" style="margin:0;">
+      <button type="submit" class="btn btn-ghost">Log out</button>
+    </form>
+  </div>
+</header>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All transactions — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='admin')}"></div>
+
+  <main class="app-main wide">
+    <div class="page-head"><h1>All transactions</h1></div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="data-table" th:if="${not #lists.isEmpty(transactions)}">
+        <thead>
+          <tr><th>#</th><th>Sender</th><th>Receiver</th><th>Amount</th><th>Note</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="tx : ${transactions}">
+            <td class="muted" th:text="'#' + ${tx.id}">#1</td>
+            <td th:text="${tx.sender.firstName + ' ' + tx.sender.lastName}">Sender</td>
+            <td th:text="${tx.receiver.firstName + ' ' + tx.receiver.lastName}">Receiver</td>
+            <td th:text="${'$' + #numbers.formatDecimal(tx.amount,1,2)}">$0.00</td>
+            <td class="muted" th:text="${tx.note ?: '—'}">—</td>
+            <td class="muted" th:text="${#temporals.format(tx.createdAt, 'MMM d, yyyy · h:mm a')}">Aug 21, 2026</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-state" th:if="${#lists.isEmpty(transactions)}">
+        <p style="margin:0;">No transactions in the system yet.</p>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

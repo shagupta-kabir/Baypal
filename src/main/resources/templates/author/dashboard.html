@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Author overview — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='admin')}"></div>
+
+  <main class="app-main wide">
+    <div class="page-head"><h1>Author overview</h1></div>
+
+    <p class="muted" style="margin-top:-10px;">
+      Platform revenue is modeled as a 5% cut of every dollar ever sent
+      through BayPal (send $100, the platform earns $5). It's a reporting
+      figure only — it doesn't change what senders or receivers see move.
+    </p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <div class="stat-value" th:text="${'$' + #numbers.formatDecimal(totalRevenue,1,2)}">$0.00</div>
+        <div class="stat-label">Total revenue</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" th:text="${adminCount}">0</div>
+        <div class="stat-label">Total admins</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" th:text="${userCount}">0</div>
+        <div class="stat-label">Total users</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" th:text="${transactionCount}">0</div>
+        <div class="stat-label">Total transactions</div>
+      </div>
+      <div class="stat-card">
+        <a class="btn btn-ghost" th:href="@{/author/accounts}">Manage accounts →</a>
+      </div>
+      <div class="stat-card">
+        <a class="btn btn-ghost" th:href="@{/author/transactions}">View admin transactions →</a>
+      </div>
+    </div>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <div style="padding:20px 20px 0;"><h3 style="margin:0;">Latest admin transactions</h3></div>
+      <table class="data-table" th:if="${not #lists.isEmpty(recentAdminTransactions)}">
+        <thead>
+          <tr><th>Sender</th><th>Receiver</th><th>Amount</th><th>Date</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="tx : ${recentAdminTransactions}">
+            <td th:text="${tx.sender.firstName + ' ' + tx.sender.lastName}">Sender</td>
+            <td th:text="${tx.receiver.firstName + ' ' + tx.receiver.lastName}">Receiver</td>
+            <td th:text="${'$' + #numbers.formatDecimal(tx.amount,1,2)}">$0.00</td>
+            <td class="muted" th:text="${#temporals.format(tx.createdAt, 'MMM d, yyyy · h:mm a')}">Aug 21, 2026</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-state" th:if="${#lists.isEmpty(recentAdminTransactions)}">
+        <p style="margin:0;">No admin transactions yet.</p>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

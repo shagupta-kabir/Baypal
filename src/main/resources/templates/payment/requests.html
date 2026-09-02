@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment requests — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='payments')}"></div>
+
+  <main class="app-main">
+    <div class="page-head">
+      <h1>Payment requests</h1>
+      <a class="btn btn-primary" th:href="@{/payments/request}">+ New request</a>
+    </div>
+
+    <h3>Requests waiting on you</h3>
+    <div class="card" style="margin-bottom:28px;">
+      <div th:if="${not #lists.isEmpty(incoming)}">
+        <div class="req-row" th:each="req : ${incoming}">
+          <div>
+            <strong th:text="${req.requester.firstName + ' ' + req.requester.lastName}">Someone</strong>
+            <div class="muted" style="font-size:.85rem;"
+                 th:text="'wants $' + ${#numbers.formatDecimal(req.amount,1,2)} + (${req.note} != null and ${req.note} != '' ? ' — ' + ${req.note} : '')">
+              wants $0.00
+            </div>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <form th:action="@{'/payments/' + ${req.id} + '/pay'}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-primary" style="padding:8px 14px; font-size:.82rem;">Pay</button>
+            </form>
+            <form th:action="@{'/payments/' + ${req.id} + '/decline'}" method="post" style="display:inline;">
+              <button type="submit" class="btn btn-ghost" style="padding:8px 14px; font-size:.82rem;">Decline</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <p class="muted" style="margin:0;" th:if="${#lists.isEmpty(incoming)}">Nobody's asked you for money. Nice.</p>
+    </div>
+
+    <h3>Requests you've sent</h3>
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="data-table" th:if="${not #lists.isEmpty(outgoing)}">
+        <thead>
+          <tr><th>To</th><th>Amount</th><th>Status</th><th>Sent</th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="req : ${outgoing}">
+            <td th:text="${req.payer.firstName + ' ' + req.payer.lastName}">Someone</td>
+            <td th:text="${'$' + #numbers.formatDecimal(req.amount,1,2)}">$0.00</td>
+            <td>
+              <span class="status-pill"
+                    th:classappend="${req.status.name() == 'PENDING'} ? 'status-pending' : (${req.status.name() == 'PAID'} ? 'status-paid' : 'status-declined')"
+                    th:text="${req.status}">PENDING</span>
+            </td>
+            <td class="muted" th:text="${#temporals.format(req.createdAt, 'MMM d, yyyy')}">Aug 21, 2026</td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="empty-state" th:if="${#lists.isEmpty(outgoing)}">
+        <p style="margin:0;">You haven't requested any money yet.</p>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

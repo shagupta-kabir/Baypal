@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transaction details — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='transactions')}"></div>
+
+  <main class="app-main">
+    <a th:href="@{/transactions}" class="muted" style="font-size:.85rem;">&larr; Back to history</a>
+
+    <div class="card form-card text-center" style="margin-top:18px;">
+      <span class="chip" th:classappend="${transaction.type == 'CREDIT'} ? 'chip-tea' : 'chip-blush'"
+            th:text="${transaction.type == 'CREDIT'} ? 'Money received' : 'Money sent'">Sent</span>
+
+      <h1 style="margin-top:16px;"
+          th:classappend="${transaction.type == 'CREDIT'} ? 'amt-in' : 'amt-out'"
+          th:text="${(transaction.type == 'CREDIT' ? '+' : '-') + '$' + #numbers.formatDecimal(transaction.amount,1,2)}">+$0.00</h1>
+
+      <div class="stack" style="text-align:left; margin-top:20px; border-top:1px solid var(--line); padding-top:20px;">
+        <div class="row">
+          <span class="muted" th:text="${transaction.type == 'CREDIT'} ? 'From' : 'To'">To</span>
+          <strong th:text="${transaction.counterpartyName}">Someone</strong>
+        </div>
+        <div class="row">
+          <span class="muted">Note</span>
+          <strong th:text="${transaction.note ?: '—'}">—</strong>
+        </div>
+        <div class="row">
+          <span class="muted">Date</span>
+          <strong th:text="${#temporals.format(transaction.createdAt, 'MMMM d, yyyy · h:mm a')}">Aug 21, 2026</strong>
+        </div>
+        <div class="row">
+          <span class="muted">Reference</span>
+          <strong th:text="'#' + ${transaction.id}">#1</strong>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

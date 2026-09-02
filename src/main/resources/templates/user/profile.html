@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your profile — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='dashboard')}"></div>
+
+  <main class="app-main">
+    <div class="page-head">
+      <h1>Your profile</h1>
+      <a class="btn btn-ghost" th:href="@{/settings}">Account settings</a>
+    </div>
+
+    <div class="card">
+      <div class="row">
+        <span class="avatar" style="width:56px; height:56px; font-size:1.3rem;"
+              th:text="${#strings.substring(user.firstName,0,1)}">A</span>
+        <div style="flex-grow:1; margin-left:16px;">
+          <h2 style="margin:0;" th:text="${user.firstName + ' ' + user.lastName}">Name</h2>
+          <p class="muted" style="margin:2px 0 0;" th:text="${user.email}">email@example.com</p>
+        </div>
+        <span class="chip chip-tea" th:text="${user.role}">USER</span>
+      </div>
+
+      <div style="margin-top:24px; border-top:1px solid var(--line); padding-top:20px;" class="stack">
+        <div class="row">
+          <span class="muted">Member since</span>
+          <strong th:text="${#temporals.format(user.createdAt, 'MMMM d, yyyy')}">Jan 1, 2026</strong>
+        </div>
+        <div class="row">
+          <span class="muted">Account status</span>
+          <span class="status-pill" th:classappend="${user.enabled} ? 'status-enabled' : 'status-disabled'"
+                th:text="${user.enabled} ? 'Active' : 'Frozen'">Active</span>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</body>
+</html>

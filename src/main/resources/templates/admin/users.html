@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage users — BayPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" th:href="@{/css/style.css}">
+  <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+  <link rel="stylesheet" th:href="@{/css/app.css}">
+</head>
+<body>
+
+  <div th:replace="~{fragments/navbar :: navbar(active='admin')}"></div>
+
+  <main class="app-main wide">
+    <div class="page-head"><h1>Users</h1></div>
+
+    <p class="muted" style="margin-top:-10px;">
+      "Add money" here is the only way a wallet gets funded without another
+      user sending it — use it after you've verified a real deposit outside the app.
+    </p>
+
+    <div class="card" style="padding:0; overflow:hidden;">
+      <table class="data-table">
+        <thead>
+          <tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Add money</th><th></th></tr>
+        </thead>
+        <tbody>
+          <tr th:each="u : ${users}">
+            <td th:text="${u.firstName + ' ' + u.lastName}">Name</td>
+            <td th:text="${u.email}">email@example.com</td>
+            <td><span class="chip chip-sky" th:text="${u.role}">USER</span></td>
+            <td>
+              <span class="status-pill" th:classappend="${u.enabled} ? 'status-enabled' : 'status-disabled'"
+                    th:text="${u.enabled} ? 'Active' : 'Frozen'">Active</span>
+            </td>
+            <td class="muted" th:text="${#temporals.format(u.createdAt, 'MMM d, yyyy')}">Aug 21, 2026</td>
+            <td>
+              <!-- posts to AdminController.creditWallet(), the one endpoint
+                   in the whole app allowed to add money to a wallet out of
+                   thin air - it's admin-only by URL rule AND @PreAuthorize -->
+              <form th:action="@{'/admin/users/' + ${u.id} + '/add-money'}" method="post"
+                    style="display:flex; gap:6px; align-items:center;" th:if="${u.role.name() == 'USER'}">
+                <input type="number" name="amount" step="0.01" min="0.01" placeholder="50.00" required
+                       style="width:90px; padding:6px 8px; border:1.5px solid var(--line); border-radius:8px; font-size:.8rem;">
+                <button type="submit" class="btn btn-primary" style="padding:6px 12px; font-size:.8rem;">Credit</button>
+              </form>
+              <span class="muted" style="font-size:.8rem;" th:if="${u.role.name() != 'USER'}">—</span>
+            </td>
+            <td>
+              <form th:action="@{'/admin/users/' + ${u.id} + '/toggle'}" method="post">
+                <button type="submit" class="btn btn-ghost" style="padding:6px 12px; font-size:.8rem;"
+                        th:text="${u.enabled} ? 'Freeze' : 'Unfreeze'">Freeze</button>
+              </form>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+</body>
+</html>

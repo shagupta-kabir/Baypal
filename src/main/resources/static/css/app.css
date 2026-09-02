@@ -1,0 +1,85 @@
+/* Shared layout for every logged-in page (wallet, transactions, payments,
+   admin). Tokens/buttons/cards/chips/forms all come from style.css - this
+   file only adds the bits specific to these "inner app" screens so we don't
+   repeat ourselves in every template. */
+
+.app-main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+.app-main.wide { max-width: 1140px; }
+
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+.page-head h1 { font-size: 1.8rem; margin: 0; }
+
+.alert {
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: .9rem;
+  margin-bottom: 20px;
+}
+.alert-success { background: var(--tea); color: #2F4A1E; }
+.alert-error { background: var(--blush); color: #7A2F22; }
+
+/* simple data tables used by history + admin pages */
+table.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: .92rem;
+}
+table.data-table th {
+  text-align: left;
+  font-size: .78rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  color: var(--ink-soft);
+  padding: 10px 12px;
+  border-bottom: 1.5px solid var(--line);
+}
+table.data-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+table.data-table tr:last-child td { border-bottom: none; }
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 700;
+}
+.status-pending { background: var(--clay); color: #5A3A16; }
+.status-paid, .status-enabled { background: var(--tea); color: #2F4A1E; }
+.status-declined, .status-disabled { background: var(--blush); color: #7A2F22; }
+
+.form-card { max-width: 480px; margin: 0 auto; }
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--ink-soft);
+}
+
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  padding: 20px;
+}
+.stat-card .stat-value { font-family: var(--font-display); font-size: 1.9rem; font-weight: 700; }
+.stat-card .stat-label { color: var(--ink-soft); font-size: .85rem; }
